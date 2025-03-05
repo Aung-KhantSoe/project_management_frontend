@@ -49,6 +49,24 @@ export const fetchIssues = (id) => {
         }
     }
 }
+export const fetchCPMIssues = (id) => {
+    return async (dispatch) => {
+        dispatch({ type: actionTypes.FETCH_CPM_ISSUES_REQUEST });
+        try {
+            const response = await api.get(`/api/issues/critical_path/${id}`);
+            console.log("fetch cpm issues", response.data);
+            dispatch({
+                type: actionTypes.FETCH_CPM_ISSUES_SUCCESS,
+                cpm_issues: response.data
+            });
+        } catch (error) {
+            dispatch({
+                type: actionTypes.FETCH_CPM_ISSUES_FAILURE,
+                error: error.message
+            })
+        }
+    }
+}
 
 export const fetchIssueById = (id) => {
     return async (dispatch) => {

@@ -2,8 +2,10 @@ import * as actionTypes from "./ActionTypes"
 
 const initialState = {
     issues: [],
+    cpm_issues: [],
     loading: false,
     error: null,
+
     issueDetails: null
 }
 
@@ -25,6 +27,12 @@ const issueReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 issue: action.issues,
+            }
+        case actionTypes.FETCH_CPM_ISSUES_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                cpm_issues: action.cpm_issues,
             }
         case actionTypes.FETCH_ISSUES_BY_ID_SUCCESS:
         case actionTypes.UPDATE_ISSUE_STATUS_SUCCESS:
