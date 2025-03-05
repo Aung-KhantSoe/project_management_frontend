@@ -1,30 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useDispatch } from 'react-redux';
-import { createIssue } from '@/Redux/Issue/Action';
+import { useDispatch, useSelector } from 'react-redux';
+import { createIssue, fetchIssues } from '@/Redux/Issue/Action';
 import { useParams } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
-import { Label } from '@/components/ui/label'; // Import the Label component
+import { Label } from '@/components/ui/label';
 
 export const CreateIssueForm = ({ status, onCreateIssue }) => {
-    const { id: projectId } = useParams(); // Rename `id` to `projectId` for clarity
+    const { id: projectId } = useParams();
     const dispatch = useDispatch();
+    const { issue } = useSelector((store) => store);
+    const [availableIssues, setAvailableIssues] = useState([]);
+
+    useEffect(() => {
+        dispatch(fetchIssues(projectId));
+    }, [dispatch, projectId]);
+
+    useEffect(() => {
+        if (issue?.issue) {
+            const filteredIssues = issue.issue.filter(
+                (item) => item.status === 'pending' || item.status === 'in_progress'
+            );
+            setAvailableIssues(filteredIssues);
+        }
+    }, [issue]);
+
     const form = useForm({
         defaultValues: {
             title: '',
             description: '',
-            priority: 'Medium', // Default priority
+            priority: 'Medium',
             estimatedTime: 0,
             dependencies: [],
-            dueDate: new Date(), // Default to today's date
+            dueDate: new Date(),
         },
     });
 
@@ -34,25 +50,25 @@ export const CreateIssueForm = ({ status, onCreateIssue }) => {
             description: data.description,
             priority: data.priority,
             status: status,
-            projectID: Number(projectId), // Ensure it's a number
-            estimatedTime: Number(data.estimatedTime), // Ensure it's an integer
+            projectID: Number(projectId),
+            estimatedTime: Number(data.estimatedTime),
             dependencies: data.dependencies
-            ? data.dependencies.split(',').map((id) => parseInt(id.trim(), 10)) // Convert string to an array of numbers
-            : [], // Ensure it's an array of numbers
-            dueDate: format(data.dueDate, 'yyyy-MM-dd'), // Ensure correct date format
-        };        
+                ? String(data.dependencies).split(',').map((id) => parseInt(id.trim(), 10))
+                : [], // Ensure IDs are numbers
+            dueDate: format(data.dueDate, 'yyyy-MM-dd'),
+        };
 
         try {
-            await dispatch(createIssue(issueData)); // Dispatch the action and wait for it to complete
-            form.reset(); // Reset the form fields
-            onCreateIssue(); // Notify the parent component to close the dialog and refresh the issue list
+            await dispatch(createIssue(issueData));
+            form.reset();
+            onCreateIssue();
         } catch (error) {
             console.error('Failed to create issue:', error);
         }
     };
 
     return (
-        <div>
+        <div >
             <Form {...form}>
                 <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
                     {/* Title */}
@@ -61,14 +77,9 @@ export const CreateIssueForm = ({ status, onCreateIssue }) => {
                         name="title"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Title</FormLabel> {/* Add label */}
+                                <FormLabel>Title</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        {...field}
-                                        type="text"
-                                        className="border w-full border-gray-700 py-5 px-5"
-                                        placeholder="Enter issue title..."
-                                    />
+                                    <Input {...field} type="text" placeholder="Enter issue title..." />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -81,14 +92,9 @@ export const CreateIssueForm = ({ status, onCreateIssue }) => {
                         name="description"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Description</FormLabel> {/* Add label */}
+                                <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        {...field}
-                                        type="text"
-                                        className="border w-full border-gray-700 py-5 px-5"
-                                        placeholder="Enter description..."
-                                    />
+                                    <Input {...field} type="text" placeholder="Enter description..." />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -101,7 +107,7 @@ export const CreateIssueForm = ({ status, onCreateIssue }) => {
                         name="priority"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Priority</FormLabel> {/* Add label */}
+                                <FormLabel>Priority</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
@@ -125,14 +131,9 @@ export const CreateIssueForm = ({ status, onCreateIssue }) => {
                         name="estimatedTime"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Estimated Time (hours)</FormLabel> {/* Add label */}
+                                <FormLabel>Estimated Time (hours)</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        className="border w-full border-gray-700 py-5 px-5"
-                                        placeholder="Enter estimated time..."
-                                    />
+                                    <Input {...field} type="number" placeholder="Enter estimated time..." />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -145,29 +146,22 @@ export const CreateIssueForm = ({ status, onCreateIssue }) => {
                         name="dueDate"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Due Date</FormLabel> {/* Add label */}
+                                <FormLabel>Due Date</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
-                                            <Button
-                                                variant="outline"
-                                                className="w-full border-gray-700 py-5 px-5"
-                                            >
-                                                {field.value ? (
-                                                    format(field.value, 'yyyy-MM-dd')
-                                                ) : (
-                                                    <span>Pick a due date</span>
-                                                )}
+                                            <Button variant="outline">
+                                                {field.value ? format(field.value, 'yyyy-MM-dd') : 'Pick a due date'}
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0">
+                                    <PopoverContent>
                                         <Calendar
                                             mode="single"
                                             selected={field.value}
                                             onSelect={field.onChange}
-                                            disabled={(date) => date < new Date()} // Disable past dates
+                                            disabled={(date) => date < new Date()}
                                         />
                                     </PopoverContent>
                                 </Popover>
@@ -176,21 +170,31 @@ export const CreateIssueForm = ({ status, onCreateIssue }) => {
                         )}
                     />
 
-                    {/* Dependencies */}
+                    {/* Dependencies (Multi-Select) */}
                     <FormField
                         control={form.control}
                         name="dependencies"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Dependencies</FormLabel> {/* Add label */}
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        type="text"
-                                        className="border w-full border-gray-700 py-5 px-5"
-                                        placeholder="Enter dependencies (comma-separated issue IDs)..."
-                                    />
-                                </FormControl>
+                                <FormLabel>Dependencies</FormLabel>
+                                <Select
+                                    multiple
+                                    onValueChange={(values) => field.onChange(values)}
+                                    value={field.value}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select dependencies" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {availableIssues.map((issue) => (
+                                            <SelectItem key={issue.id} value={issue.id.toString()}>
+                                                {issue.title}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
