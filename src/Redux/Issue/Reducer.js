@@ -7,7 +7,7 @@ const initialState = {
     issueDetails: null
 }
 
-const issueReducer = (state = initialState, action)=>{
+const issueReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.FETCH_ISSUES_REQUEST:
         case actionTypes.CREATE_ISSUE_REQUEST:
@@ -37,20 +37,20 @@ const issueReducer = (state = initialState, action)=>{
             return {
                 ...state,
                 loading: false,
-                issues:[...state.issues, action.issue],
+                issues: [...state.issues, action.issue],
             }
         case actionTypes.ASSIGNED_ISSUE_TO_USER_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                issues:state.issues.map((issue)=>
-                issue.id === action.issue.id ? action.issue : issue),
+                issues: state.issues.map((issue) =>
+                    issue.id === action.issue.id ? action.issue : issue),
             }
         case actionTypes.DELETE_ISSUE_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                issues: state.issues.filter((issue)=>issue.id !== action.issueId),
+                issues: state.issues.filter((issue) => issue.id !== action.issueId), // Remove the deleted issue
             };
         case actionTypes.FETCH_ISSUES_FAILURE:
         case actionTypes.CREATE_ISSUE_FAILURE:
@@ -58,7 +58,7 @@ const issueReducer = (state = initialState, action)=>{
         case actionTypes.ASSIGNED_ISSUE_TO_USER_FAILURE:
             return {
                 ...state,
-                loading:false,
+                loading: false,
                 error: action.error,
             }
         default:
