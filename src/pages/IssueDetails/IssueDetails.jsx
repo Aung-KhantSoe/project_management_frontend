@@ -91,8 +91,8 @@ export const IssueDetails = () => {
 
                                 </div>
                                 <div className='flex gap-10 items-center'>
-                                    <p className='w-[7rem]'>Labels</p>
-                                    <p>None</p>
+                                    <p className='w-[7rem]'>Priority</p>
+                                    <p>{issue.issueDetails?.priority}</p>
                                 </div>
                                 <div className='flex gap-10 items-center'>
                                     <p className='w-[7rem]'>Status</p>
@@ -101,16 +101,13 @@ export const IssueDetails = () => {
                                     </Badge>
                                 </div>
                                 <div className='flex gap-10 items-center'>
-                                    <p className='w-[7rem]'>Release</p>
-                                    <p>01-02-2025</p>
+                                    <p className='w-[7rem]'>Due Date</p>
+                                    <p>{issue.issueDetails?.dueDate}</p>
                                 </div>
                                 <div className='flex gap-10 items-center'>
-                                    <p className='w-[7rem]'>Reporter</p>
+                                    <p className='w-[7rem]'>Duration</p>
                                     <div className='flex items-center gap-3'>
-                                        <Avatar className='h-8 w-8 text-xs'>
-                                            <AvatarFallback>A</AvatarFallback>
-                                        </Avatar>
-                                        <p>AKS</p>
+                                        <p>{issue.issueDetails?.estimatedTime} hours</p>
                                     </div>
                                 </div>
                             </div>

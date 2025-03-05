@@ -7,7 +7,7 @@ import React from 'react';
 import { UserList } from './UserList';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { deleteIssue, fetchIssues } from '@/Redux/Issue/Action';
+import { deleteIssue, fetchIssues, updateIssueStatus } from '@/Redux/Issue/Action';
 
 const IssueCard = ({ item, projectID }) => {
     const navigate = useNavigate();
@@ -20,6 +20,11 @@ const IssueCard = ({ item, projectID }) => {
         } catch (error) {
             console.error('Failed to delete issue:', error);
         }
+    };
+
+    const handleUpdateIssueStatus = async (status) => {
+        await dispatch(updateIssueStatus({ id: item.id, status }));
+        console.log(status);
     };
 
     return (
@@ -47,11 +52,25 @@ const IssueCard = ({ item, projectID }) => {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuItem>In Progress</DropdownMenuItem>
-                            <DropdownMenuItem>Done</DropdownMenuItem>
+                            {item.status !== 'pending' && (
+                                <DropdownMenuItem onClick={() => handleUpdateIssueStatus('pending')}>
+                                    To Do
+                                </DropdownMenuItem>
+                            )}
+                            {item.status !== 'in_progress' && (
+                                <DropdownMenuItem onClick={() => handleUpdateIssueStatus('in_progress')}>
+                                    In Progress
+                                </DropdownMenuItem>
+                            )}
+                            {item.status !== 'done' && (
+                                <DropdownMenuItem onClick={() => handleUpdateIssueStatus('done')}>
+                                    Done
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem>Edit</DropdownMenuItem>
                             <DropdownMenuItem onClick={handleIssueDelete}>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
+
                     </DropdownMenu>
                 </div>
             </CardHeader>

@@ -112,25 +112,29 @@ export const ProjectDetails = () => {
                                                             );
                                                         })}
                                                     </ul>
-                                                    <h3 className="text-md font-semibold mt-3">Remaining Issues :</h3>
-                                                    <ul>
-                                                        {issue.cpm_issues?.remainingIssues?.map((issueId, index) => {
-                                                            const issueDetails = getIssueDetailsById(issueId);
-                                                            return (
-                                                                <li key={index} className="mt-2">
-                                                                    {issueDetails ? (
-                                                                        <div>
-                                                                            <strong>{issueDetails.title}</strong> - {issueDetails.description} (Duration: {issueDetails.estimatedTime})
-                                                                        </div>
-                                                                    ) : (
-                                                                        <div>
-                                                                            <strong>Issue ID:</strong> {issueId}
-                                                                        </div>
-                                                                    )}
-                                                                </li>
-                                                            );
-                                                        })}
-                                                    </ul>
+                                                    {issue.cpm_issues?.remainingIssues > 0 ?
+                                                        <div>
+                                                            <h3 className="text-md font-semibold mt-3">Remaining Issues :</h3>
+                                                            <ul>
+                                                                {issue.cpm_issues?.remainingIssues?.map((issueId, index) => {
+                                                                    const issueDetails = getIssueDetailsById(issueId);
+                                                                    return (
+                                                                        <li key={index} className="mt-2">
+                                                                            {issueDetails ? (
+                                                                                <div>
+                                                                                    <strong>{issueDetails.title}</strong> - {issueDetails.description} (Duration: {issueDetails.estimatedTime})
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div>
+                                                                                    <strong>Issue ID:</strong> {issueId}
+                                                                                </div>
+                                                                            )}
+                                                                        </li>
+                                                                    );
+                                                                })}
+                                                            </ul>
+                                                        </div>
+                                                        : <div></div>}
                                                 </div>
                                             ) : (
                                                 <p>No critical path data available.</p>
