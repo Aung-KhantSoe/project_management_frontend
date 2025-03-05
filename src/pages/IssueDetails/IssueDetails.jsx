@@ -66,7 +66,7 @@ export const IssueDetails = () => {
                     </div>
                 </ScrollArea>
                 <div className='w-full lg:w-[30%] space-y-2'>
-                    <Select onValueChange={handleUpdateIssueStatus}>
+                    <Select onValueChange={handleUpdateIssueStatus} value={issue.issueDetails?.status}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="To Do" />
                         </SelectTrigger>

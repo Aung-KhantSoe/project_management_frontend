@@ -16,6 +16,7 @@ export const CreateCommentForm = ({ issueId }) => {
     });
     const onSubmit = (data) => {
         dispatch(createComment({content:data.content,issueId:issueId}));
+        form.reset();
         console.log("create project data", data)
     }
     return (
