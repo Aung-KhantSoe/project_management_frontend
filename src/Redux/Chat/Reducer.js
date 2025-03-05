@@ -1,10 +1,10 @@
 import * as actionTypes from "./ActionType";
 
 const initialState = {
-    messages:[],
-    loading:false,
-    error:null,
-    chat:null
+    messages: [],
+    loading: false,
+    error: null,
+    chat: null
 }
 const chatReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -28,8 +28,8 @@ const chatReducer = (state = initialState, action) => {
             return {
                 ...state,
                 loading: false,
-                messages:[...state.messages,action.messages]
-            }
+                messages: [...state.messages, action.messages]
+            };
         case actionTypes.FETCH_CHAT_BY_PROJECT_SUCCESS:
             return {
                 ...state,

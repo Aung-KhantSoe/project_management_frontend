@@ -1,19 +1,37 @@
 import * as actionTypes from "./ActionType";
 import { api } from "@/config/api"
 
+// export const sendMessage = (messageData) => {
+//     return async (dispatch) => {
+//         dispatch({ type: actionTypes.SEND_MESSAGE_SUCCESS });
+//         try {
+//             const response = await api.post("/api/messages/send",
+//                 messageData
+//             );
+//             dispatch({
+//                 type: actionTypes.SEND_MESSAGE_SUCCESS, message: response.data,
+//             });
+//             console.log('message sent',response.data)
+//         }
+//         catch (error) {
+//             dispatch({
+//                 type: actionTypes.SEND_MESSAGE_FAILURE,
+//                 error: error.message,
+//             });
+//         }
+//     };
+// };
 export const sendMessage = (messageData) => {
     return async (dispatch) => {
-        dispatch({ type: actionTypes.SEND_MESSAGE_SUCCESS });
+        dispatch({ type: actionTypes.SEND_MESSAGE_REQUEST });
         try {
-            const response = await api.post("/api/messages/send",
-                messageData
-            );
+            const response = await api.post("/api/messages/send", messageData);
+            console.log('message sent', response.data);
             dispatch({
-                type: actionTypes.SEND_MESSAGE_SUCCESS, message: response.data,
+                type: actionTypes.SEND_MESSAGE_SUCCESS,
+                message: response.data, // Ensure this contains the full message object with `sender`
             });
-            console.log('message sent',response.data)
-        }
-        catch (error) {
+        } catch (error) {
             dispatch({
                 type: actionTypes.SEND_MESSAGE_FAILURE,
                 error: error.message,
